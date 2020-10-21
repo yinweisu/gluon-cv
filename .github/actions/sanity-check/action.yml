@@ -1,0 +1,6 @@
+name: "Sanity Check"
+description: "Run lint style check"
+
+runs:
+  using: "docker"
+  image: "Dockerfile"
