@@ -7,10 +7,28 @@ on:
     branches: [ master ]
 
 jobs:
+  build:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
     steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: setup-conda
+        uses: s-weigand/setup-conda@v1.0.5
+        with:
+          update-conda: true
+          python-version: 3.7
       - name: sanity-check
-        uses: ./github/actions/sanity-check
+        shell: bash
+        # https://github.com/conda/conda/issues/7980
+        run: |
+            export CONDA_BASE=$(conda info --base)
+            source $CONDA_BASE/etc/profile.d/conda.sh
+            conda env create -n gluon_cv_lint -f ./tests/pylint.yml
+            conda env update -n gluon-cv-lint -f ./tests/pylint.yml --prune
+            conda activate gluon-cv-lint
+            conda list
+            make clean
+            make pylint
