@@ -2,7 +2,7 @@ name: CI workflow
 
 on:
   push:
-    branches: [ master ]
+    # branches: [ master ]
   pull_request:
     branches: [ master ]
 
@@ -11,24 +11,43 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [macos-latest]
     steps:
       - name: checkout
         uses: actions/checkout@v2
-      - name: setup-conda
-        uses: s-weigand/setup-conda@v1.0.5
+      - name: Setup Miniconda
+        uses: conda-incubator/setup-miniconda@v1.7.0
         with:
-          update-conda: true
+          auto-update-conda: true
           python-version: 3.7
+      # - name: setup-conda
+      #   uses: s-weigand/setup-conda@v1.0.5
+      #   with:
+      #     update-conda: true
+      #     python-version: 3.7
       - name: sanity-check
-        shell: bash
-        # https://github.com/conda/conda/issues/7980
+        shell: bash -l {0}
         run: |
-            export CONDA_BASE=$(conda info --base)
-            source $CONDA_BASE/etc/profile.d/conda.sh
             conda env create -n gluon_cv_lint -f ./tests/pylint.yml
             conda env update -n gluon-cv-lint -f ./tests/pylint.yml --prune
             conda activate gluon-cv-lint
             conda list
             make clean
             make pylint
+      - name: unit-test
+        shell: bash -l {0}
+        run: |
+            conda env create -n gluon_cv_py3_test -f tests/py3.yml
+            conda env update -n gluon_cv_py3_test -f tests/py3.yml --prune
+            conda activate gluon_cv_py3_test
+            conda list
+            export CUDA_VISIBLE_DEVICES=0
+            export KMP_DUPLICATE_LIB_OK=TRUE
+            make clean
+            pip install --upgrade --force-reinstall --no-deps .
+            env
+            export LD_LIBRARY_PATH=/usr/local/cuda-10.0/lib64
+            export MPLBACKEND=Agg
+            export MXNET_CUDNN_AUTOTUNE_DEFAULT=0
+            nosetests --with-timer --timer-ok 5 --timer-warning 20 -x --with-coverage --cover-package gluoncv -v tests/unittests
+            nosetests --with-timer --timer-ok 5 --timer-warning 20 -x --with-coverage --cover-package gluoncv -v tests/model_zoo
