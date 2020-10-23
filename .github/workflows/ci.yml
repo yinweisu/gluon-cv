@@ -46,6 +46,7 @@ jobs:
             export LD_LIBRARY_PATH=/usr/local/cuda-10.0/lib64
             git submodule update --init --recursive
             git clean -fx
+            pip install --upgrade --force-reinstall --no-deps .
             cd docs && make clean && make html
       - name: unit-test
         shell: bash -l {0}
