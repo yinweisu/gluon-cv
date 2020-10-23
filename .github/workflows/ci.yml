@@ -11,7 +11,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest]
+        os: [macos-latest, ubuntu-latest, windows-latest]
     steps:
       - name: checkout
         uses: actions/checkout@v2
@@ -34,6 +34,19 @@ jobs:
             conda list
             make clean
             make pylint
+      - name: build-docs
+        shell: bash -l {0}
+        run: |
+            conda env create -n gluon_vision_docs -f docs/build.yml
+            conda env update -n gluon_vision_docs -f docs/build.yml --prune
+            conda activate gluon_vision_docs
+            export PYTHONPATH=pwd
+            export CUDA_VISIBLE_DEVICES=0
+            env
+            export LD_LIBRARY_PATH=/usr/local/cuda-10.0/lib64
+            git submodule update --init --recursive
+            git clean -fx
+            cd docs && make clean && make html
       - name: unit-test
         shell: bash -l {0}
         run: |
