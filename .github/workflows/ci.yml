@@ -41,6 +41,7 @@ jobs:
             conda env update -n gluon_vision_docs -f docs/build.yml --prune
             conda activate gluon_vision_docs
             export PYTHONPATH=pwd
+            echo $PYTHONPATH
             export CUDA_VISIBLE_DEVICES=0
             env
             export LD_LIBRARY_PATH=/usr/local/cuda-10.0/lib64
