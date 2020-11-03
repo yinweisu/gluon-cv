@@ -62,7 +62,7 @@ jobs:
             export MXNET_CUDNN_AUTOTUNE_DEFAULT=0
             mkdir -p ~/.mxnet/datasets/tiny_coco
             wget https://subcoco.s3-us-west-2.amazonaws.com/sub_val.zip
-            unzip sub_val.zip ~/.mxnet/datasets/tiny_coco
+            unzip sub_val.zip -d ~/.mxnet/datasets/tiny_coco
             wget https://subcoco.s3-us-west-2.amazonaws.com/instances_val2017_tiny.json
             mv instances_val2017_sub_bicycle_motorcycle.json ~/.mxnet/datasets/tiny_coco/annotations
             nosetests --with-timer --timer-ok 5 --timer-warning 20 --with-coverage --cover-package gluoncv -v tests/unittests
