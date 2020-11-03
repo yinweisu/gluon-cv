@@ -60,11 +60,12 @@ jobs:
             export LD_LIBRARY_PATH=/usr/local/cuda-10.0/lib64
             export MPLBACKEND=Agg
             export MXNET_CUDNN_AUTOTUNE_DEFAULT=0
-            mkdir -p ~/.mxnet/datasets/tiny_coco/annotations
-            wget https://subcoco.s3-us-west-2.amazonaws.com/sub_val.zip
-            unzip sub_val.zip -d ~/.mxnet/datasets/tiny_coco
-            wget https://subcoco.s3-us-west-2.amazonaws.com/instances_val2017_tiny.json
-            mv instances_val2017_tiny.json ~/.mxnet/datasets/tiny_coco/annotations
+            export TINY_COCO=~/.mxnet/datasets/tiny_coco
+            mkdir -p $TINY_COCO/annotations
+            wget -q https://subcoco.s3-us-west-2.amazonaws.com/sub_val.zip
+            unzip sub_val.zip -d $TINY_COCO
+            wget -q https://subcoco.s3-us-west-2.amazonaws.com/instances_val2017_tiny.json
+            mv instances_val2017_tiny.json $TINY_COCO/annotations
             nosetests --with-timer --timer-ok 5 --timer-warning 20 --with-coverage --cover-package gluoncv -v tests/unittests
             nosetests --with-timer --timer-ok 5 --timer-warning 20 --with-coverage --cover-package gluoncv -v tests/model_zoo
             
