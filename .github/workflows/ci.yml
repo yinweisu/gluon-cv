@@ -63,7 +63,7 @@ jobs:
             export TINY_COCO=~/.mxnet/datasets/tiny_coco
             mkdir -p $TINY_COCO/annotations
             wget -q https://subcoco.s3-us-west-2.amazonaws.com/sub_val.zip
-            unzip sub_val.zip -d $TINY_COCO
+            unzip -q sub_val.zip -d $TINY_COCO
             wget -q https://subcoco.s3-us-west-2.amazonaws.com/instances_val2017_tiny.json
             mv instances_val2017_tiny.json $TINY_COCO/annotations
             nosetests --with-timer --timer-ok 5 --timer-warning 20 --with-coverage --cover-package gluoncv -v tests/unittests
