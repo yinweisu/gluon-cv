@@ -20,15 +20,15 @@ jobs:
         with:
           auto-update-conda: true
           python-version: 3.7
-      - name: sanity-check
-        shell: bash -l {0}
-        run: |
-            conda env create -n gluon_cv_lint -f ./tests/pylint.yml
-            conda env update -n gluon-cv-lint -f ./tests/pylint.yml --prune
-            conda activate gluon-cv-lint
-            conda list
-            make clean
-            make pylint
+      # - name: sanity-check
+      #   shell: bash -l {0}
+      #   run: |
+      #       conda env create -n gluon_cv_lint -f ./tests/pylint.yml
+      #       conda env update -n gluon-cv-lint -f ./tests/pylint.yml --prune
+      #       conda activate gluon-cv-lint
+      #       conda list
+      #       make clean
+      #       make pylint
       # - name: build-docs
       #   shell: bash -l {0}
       #   run: |
@@ -60,12 +60,11 @@ jobs:
             export LD_LIBRARY_PATH=/usr/local/cuda-10.0/lib64
             export MPLBACKEND=Agg
             export MXNET_CUDNN_AUTOTUNE_DEFAULT=0
-            mkdir -p ~/.mxnet/datasets/tiny_coco
+            mkdir -p ~/.mxnet/datasets/tiny_coco/annotations
             wget https://subcoco.s3-us-west-2.amazonaws.com/sub_val.zip
             unzip sub_val.zip -d ~/.mxnet/datasets/tiny_coco
             wget https://subcoco.s3-us-west-2.amazonaws.com/instances_val2017_tiny.json
             mv instances_val2017_tiny.json ~/.mxnet/datasets/tiny_coco/annotations
-            ls ~/.mxnet/datasets/tiny_coco/annotations
             nosetests --with-timer --timer-ok 5 --timer-warning 20 --with-coverage --cover-package gluoncv -v tests/unittests
             nosetests --with-timer --timer-ok 5 --timer-warning 20 --with-coverage --cover-package gluoncv -v tests/model_zoo
             
