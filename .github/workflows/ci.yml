@@ -35,12 +35,9 @@ jobs:
                                              --command "python3 demo_cifar10.py" \
                                              --wait
       - name: Wait for job and copy files from AWS s3
-        if: ${{ success() }}
+        if: ${{ failure() || success() }}
         run: |
-          echo batch succeeded
-        if: ${{ failure() }}
-        run: |
-          echo batch failed
+          echo batch done
       # - name: sanity-check
       #   shell: bash -l {0}
       #   run: |
