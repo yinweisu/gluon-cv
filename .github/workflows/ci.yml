@@ -23,6 +23,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.GLUONCV_DEV_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Test project on AWS Batch(For push)
+        shell: bash -l {0}
         if: ${{ github.event_name == 'push' }}
         run: |
           conda env create -n gluon_cv_py3_test -f tests/py3_mxnet_ci.yml
@@ -43,6 +44,7 @@ jobs:
                                              --command "python3 demo_cifar10.py" \
                                              --wait
       - name: Wait for job and copy files from AWS s3
+        shell: bash -l {0}
         if: ${{ failure() || success() }}
         run: |
           echo batch done
