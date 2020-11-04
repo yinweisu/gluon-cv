@@ -20,20 +20,21 @@ jobs:
         with:
           auto-update-conda: true
           python-version: 3.7
-      - name: check github env vars
-        shell: bash -l {0}
-        run : |
-             echo ${{ github.ref }}
-             echo ${{ github.repository }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
       # - name: sanity-check
       #   shell: bash -l {0}
       #   run: |
-      #       conda env create -n gluon_cv_lint -f ./tests/pylint.yml
-      #       conda env update -n gluon-cv-lint -f ./tests/pylint.yml --prune
-      #       conda activate gluon-cv-lint
-      #       conda list
-      #       make clean
-      #       make pylint
+      #     conda env create -n gluon_cv_lint -f ./tests/pylint.yml
+      #     conda env update -n gluon-cv-lint -f ./tests/pylint.yml --prune
+      #     conda activate gluon-cv-lint
+      #     conda list
+      #     make clean
+      #     make pylint
       # - name: build-docs
       #   shell: bash -l {0}
       #   run: |
@@ -53,26 +54,26 @@ jobs:
       # - name: unit-test
       #   shell: bash -l {0}
       #   run: |
-      #       conda env create -n gluon_cv_py3_test -f tests/py3_mxnet_ci.yml
-      #       conda env update -n gluon_cv_py3_test -f tests/py3_mxnet_ci.yml --prune
-      #       conda activate gluon_cv_py3_test
-      #       conda list
-      #       export CUDA_VISIBLE_DEVICES=0
-      #       export KMP_DUPLICATE_LIB_OK=TRUE
-      #       make clean
-      #       pip install --upgrade --force-reinstall --no-deps .
-      #       env
-      #       export LD_LIBRARY_PATH=/usr/local/cuda-10.0/lib64
-      #       export MPLBACKEND=Agg
-      #       export MXNET_CUDNN_AUTOTUNE_DEFAULT=0
-      #       export TINY_COCO=~/.mxnet/datasets/tiny_coco
-      #       mkdir -p $TINY_COCO/annotations
-      #       wget -q https://gluoncv-ci.s3-us-west-2.amazonaws.com/mini_coco/sub_val.zip
-      #       unzip -q sub_val.zip -d $TINY_COCO
-      #       mv $TINY_COCO/sub_val $TINY_COCO/val2017
-      #       ls $TINY_COCO
-      #       wget -q https://gluoncv-ci.s3-us-west-2.amazonaws.com/mini_coco/instances_val2017_tiny.json
-      #       mv instances_val2017_tiny.json $TINY_COCO/annotations
-      #       nosetests --with-timer --timer-ok 5 --timer-warning 20 --with-coverage --cover-package gluoncv -v tests/unittests
-      #       nosetests --with-timer --timer-ok 5 --timer-warning 20 --with-coverage --cover-package gluoncv -v tests/model_zoo
+      #     conda env create -n gluon_cv_py3_test -f tests/py3_mxnet_ci.yml
+      #     conda env update -n gluon_cv_py3_test -f tests/py3_mxnet_ci.yml --prune
+      #     conda activate gluon_cv_py3_test
+      #     conda list
+      #     export CUDA_VISIBLE_DEVICES=0
+      #     export KMP_DUPLICATE_LIB_OK=TRUE
+      #     make clean
+      #     pip install --upgrade --force-reinstall --no-deps .
+      #     env
+      #     export LD_LIBRARY_PATH=/usr/local/cuda-10.0/lib64
+      #     export MPLBACKEND=Agg
+      #     export MXNET_CUDNN_AUTOTUNE_DEFAULT=0
+      #     export TINY_COCO=~/.mxnet/datasets/tiny_coco
+      #     mkdir -p $TINY_COCO/annotations
+      #     wget -q https://gluoncv-ci.s3-us-west-2.amazonaws.com/mini_coco/sub_val.zip
+      #     unzip -q sub_val.zip -d $TINY_COCO
+      #     mv $TINY_COCO/sub_val $TINY_COCO/val2017
+      #     ls $TINY_COCO
+      #     wget -q https://gluoncv-ci.s3-us-west-2.amazonaws.com/mini_coco/instances_val2017_tiny.json
+      #     mv instances_val2017_tiny.json $TINY_COCO/annotations
+      #     nosetests --with-timer --timer-ok 5 --timer-warning 20 --with-coverage --cover-package gluoncv -v tests/unittests
+      #     nosetests --with-timer --timer-ok 5 --timer-warning 20 --with-coverage --cover-package gluoncv -v tests/model_zoo
             
