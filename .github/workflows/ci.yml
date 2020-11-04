@@ -23,8 +23,8 @@ jobs:
       - name: check github env vars
         shell: bash -l {0}
         run : |
-             echo {{ github.ref }}
-             echo {{ github.repository }}
+             echo ${{ github.ref }}
+             echo ${{ github.repository }}
       # - name: sanity-check
       #   shell: bash -l {0}
       #   run: |
