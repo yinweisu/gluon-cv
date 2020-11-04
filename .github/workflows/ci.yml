@@ -1,10 +1,6 @@
 name: CI workflow
 
-on:
-  push:
-    # branches: [ master ]
-  pull_request:
-    branches: [ master ]
+on: [push, pull_request_target]
 
 jobs:
   build:
@@ -26,6 +22,25 @@ jobs:
           aws-access-key-id: ${{ secrets.GLUONCV_DEV_ACCESS_ID }}
           aws-secret-access-key: ${{ secrets.GLUONCV_DEV_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+      - name: Test project on AWS Batch(For push)
+        if: ${{ github.event_name == 'push' }}
+        run: |
+          echo "Start submitting job"
+          python ./tools/batch/submit-job.py --region us-east-1 \
+                                             --job-type g4dn.4x \
+                                             --name GluonCV-GPU-Test-${{ github.ref }} \
+                                             --source-ref ${{ github.ref }} \
+                                             --work-dir docs/tutorials/classification \
+                                             --remote https://github.com/${{ github.repository }} \
+                                             --command "python3 demo_cifar10.py" \
+                                             --wait
+      - name: Wait for job and copy files from AWS s3
+        if: ${{ success() }}
+        run: |
+          echo batch succeeded
+        if: ${{ failure() }}
+        run: |
+          echo batch failed
       # - name: sanity-check
       #   shell: bash -l {0}
       #   run: |
