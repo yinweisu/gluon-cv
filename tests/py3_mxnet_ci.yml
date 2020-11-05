@@ -25,4 +25,3 @@ dependencies:
     - portalocker
     - autocfg
     - boto3
-    - wget
