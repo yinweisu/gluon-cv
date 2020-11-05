@@ -15,7 +15,7 @@ dependencies:
   - matplotlib
   - tqdm
   - pillow
-  - python-wget
+  - wget
   - pip:
     - mxnet
     - coverage-badge
