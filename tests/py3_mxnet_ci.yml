@@ -15,7 +15,6 @@ dependencies:
   - matplotlib
   - tqdm
   - pillow
-  - wget
   - pip:
     - mxnet
     - coverage-badge
@@ -26,3 +25,4 @@ dependencies:
     - portalocker
     - autocfg
     - boto3
+    - wget
