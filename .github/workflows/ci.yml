@@ -74,7 +74,7 @@ jobs:
           export MXNET_CUDNN_AUTOTUNE_DEFAULT=0
           export TINY_COCO=~/.mxnet/datasets/tiny_coco
           mkdir -p $TINY_COCO/annotations
-          wget -q https://gluoncv-ci.s3-us-west-2.amazonaws.com/mini_coco/sub_val.zip
+          curl https://gluoncv-ci.s3-us-west-2.amazonaws.com/mini_coco/sub_val.zip --output sub_val.zip
           unzip -q sub_val.zip -d $TINY_COCO
           mv $TINY_COCO/sub_val $TINY_COCO/val2017
           ls $TINY_COCO
