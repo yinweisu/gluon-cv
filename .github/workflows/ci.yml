@@ -57,32 +57,32 @@ jobs:
           curl -s https://gluoncv-ci.s3-us-west-2.amazonaws.com/tiny_motorbike.zip --output tiny_motorbike.zip 
           unzip -q tiny_motorbike.zip -d $TINY_MOTORBIKE
           nosetests --with-timer --timer-ok 5 --timer-warning 20 -x --with-coverage --cover-package gluoncv -v tests/unittests
-      # - name: Test project on AWS Batch(For push)
-      #   shell: bash -l {0}
-      #   if: ${{ github.event_name == 'push' }}
-      #   run: |
-      #     conda env create -n gluon_cv_py3_test -f tests/py3_mxnet_ci.yml
-      #     conda env update -n gluon_cv_py3_test -f tests/py3_mxnet_ci.yml --prune
-      #     conda activate gluon_cv_py3_test
-      #     conda list
-      #     export CUDA_VISIBLE_DEVICES=0
-      #     export KMP_DUPLICATE_LIB_OK=TRUE
-      #     make clean
-      #     pip install --upgrade --force-reinstall --no-deps .
-      #     echo "Start submitting job"
-      #     python ./tools/batch/submit-job.py --region us-east-1 \
-      #                                        --job-type g4dn.12x \
-      #                                        --name GluonCV-GPU-Test-${{ github.ref }} \
-      #                                        --source-ref ${{ github.ref }} \
-      #                                        --work-dir tests \
-      #                                        --remote https://github.com/${{ github.repository }} \
-      #                                        --command "nosetests --with-timer --timer-ok 5 --timer-warning 20 --with-coverage --cover-package gluoncv -v model_zoo" \
-      #                                        --wait
-      # - name: Wait for job and copy files from AWS s3
-      #   shell: bash -l {0}
-      #   if: ${{ failure() || success() }}
-      #   run: |
-      #     echo batch done
+      - name: Test project on AWS Batch(For push)
+        shell: bash -l {0}
+        if: ${{ github.event_name == 'push' }}
+        run: |
+          conda env create -n gluon_cv_py3_test -f tests/py3_mxnet_ci.yml
+          conda env update -n gluon_cv_py3_test -f tests/py3_mxnet_ci.yml --prune
+          conda activate gluon_cv_py3_test
+          conda list
+          export CUDA_VISIBLE_DEVICES=0
+          export KMP_DUPLICATE_LIB_OK=TRUE
+          make clean
+          pip install --upgrade --force-reinstall --no-deps .
+          echo "Start submitting job"
+          python ./tools/batch/submit-job.py --region us-east-1 \
+                                             --job-type g4dn.12x \
+                                             --name GluonCV-GPU-Test-${{ github.ref }} \
+                                             --source-ref ${{ github.ref }} \
+                                             --work-dir tests \
+                                             --remote https://github.com/${{ github.repository }} \
+                                             --command "nosetests --with-timer --timer-ok 5 --timer-warning 20 -x --with-coverage --cover-package gluoncv -v model_zoo" \
+                                             --wait
+      - name: Wait for job and copy files from AWS s3
+        shell: bash -l {0}
+        if: ${{ failure() || success() }}
+        run: |
+          echo batch done
       # - name: build-docs
       #   shell: bash -l {0}
       #   run: |
