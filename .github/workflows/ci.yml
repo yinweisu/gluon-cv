@@ -54,9 +54,9 @@ jobs:
           mv $TINY_COCO/sub_val $TINY_COCO/val2017
           curl -s https://gluoncv-ci.s3-us-west-2.amazonaws.com/mini_coco/instances_val2017_tiny.json --output instances_val2017_tiny.json
           mv instances_val2017_tiny.json $TINY_COCO/annotations
-          curl -s -q https://gluoncv-ci.s3-us-west-2.amazonaws.com/tiny_motorbike.zip tiny_motorbike.zip 
+          curl -s https://gluoncv-ci.s3-us-west-2.amazonaws.com/tiny_motorbike.zip --output tiny_motorbike.zip 
           unzip -q tiny_motorbike.zip -d $TINY_MOTORBIKE
-          nosetests --with-timer --timer-ok 5 --timer-warning 20 --with-coverage --cover-package gluoncv -v tests/unittests
+          nosetests --with-timer --timer-ok 5 --timer-warning 20 -x --with-coverage --cover-package gluoncv -v tests/unittests
       # - name: Test project on AWS Batch(For push)
       #   shell: bash -l {0}
       #   if: ${{ github.event_name == 'push' }}
