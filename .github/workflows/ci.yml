@@ -63,11 +63,14 @@ jobs:
           aws-access-key-id: ${{ secrets.GLUONCV_DEV_ACCESS_ID }}
           aws-secret-access-key: ${{ secrets.GLUONCV_DEV_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+      - name: Install dependencies
+        run: |
+          pip install --upgrade --force-reinstall --no-deps .
+          pip install boto3
       - name: Test project on AWS Batch(For push)
         shell: bash -l {0}
         if: ${{ github.event_name == 'push' }}
         run: |
-          pip install --upgrade --force-reinstall --no-deps .
           echo "Start submitting job"
           python ./tools/batch/submit-job.py --region us-east-1 \
                                              --job-type g4dn.12x \
@@ -80,7 +83,6 @@ jobs:
       - name: Test project on AWS Batch(For pull request)
         if: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' }}
         run: |
-          pip install --upgrade --force-reinstall --no-deps .
           echo "Start submitting job"
           python ./tools/batch/submit-job.py --region us-east-1 \
                                              --job-type g4dn.12x \
