@@ -30,7 +30,9 @@ RUN pip3 install  --no-cache --upgrade \
     awscli \
     pypandoc \
     nose \
-    nose-timer
+    nose-timer \
+    torch \
+    torchvision
 RUN git clone https://github.com/dmlc/gluon-cv
 WORKDIR gluon-cv
 ADD gluon_cv_job.sh .
