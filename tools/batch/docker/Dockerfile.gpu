@@ -28,7 +28,9 @@ RUN pip3 install  --no-cache --upgrade \
     wheel \
     cmake \
     awscli \
-    pypandoc
+    pypandoc \
+    nose \
+    nose-timer
 RUN git clone https://github.com/dmlc/gluon-cv
 WORKDIR gluon-cv
 ADD gluon_cv_job.sh .
