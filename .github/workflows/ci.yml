@@ -3,7 +3,7 @@ name: CI workflow
 on: [push, pull_request_target]
 
 jobs:
-  build:
+  unittests:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -16,12 +16,6 @@ jobs:
         with:
           auto-update-conda: true
           python-version: 3.7
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.GLUONCV_DEV_ACCESS_ID }}
-          aws-secret-access-key: ${{ secrets.GLUONCV_DEV_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
       # - name: sanity-check
       #   shell: bash -l {0}
       #   run: |
@@ -57,17 +51,22 @@ jobs:
       #     curl -s https://gluoncv-ci.s3-us-west-2.amazonaws.com/tiny_motorbike.zip --output tiny_motorbike.zip 
       #     unzip -q tiny_motorbike.zip -d $TINY_MOTORBIKE
       #     nosetests --with-timer --timer-ok 5 --timer-warning 20 -x --with-coverage --cover-package gluoncv -v tests/unittests
+  model_zoo:
+    needs: unittests
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.GLUONCV_DEV_ACCESS_ID }}
+          aws-secret-access-key: ${{ secrets.GLUONCV_DEV_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
       - name: Test project on AWS Batch(For push)
         shell: bash -l {0}
         if: ${{ github.event_name == 'push' }}
         run: |
-          conda env create -n gluon_cv_py3_test -f tests/py3_mxnet_ci.yml
-          conda env update -n gluon_cv_py3_test -f tests/py3_mxnet_ci.yml --prune
-          conda activate gluon_cv_py3_test
-          conda list
-          export CUDA_VISIBLE_DEVICES=0
-          export KMP_DUPLICATE_LIB_OK=TRUE
-          make clean
           pip install --upgrade --force-reinstall --no-deps .
           echo "Start submitting job"
           python ./tools/batch/submit-job.py --region us-east-1 \
@@ -78,11 +77,24 @@ jobs:
                                              --remote https://github.com/${{ github.repository }} \
                                              --command "nosetests --with-timer --timer-ok 5 --timer-warning 20 -x --with-coverage --cover-package gluoncv -v model_zoo" \
                                              --wait
-      - name: Wait for job and copy files from AWS s3
-        shell: bash -l {0}
-        if: ${{ failure() || success() }}
+      - name: Test project on AWS Batch(For pull request)
+        if: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' }}
         run: |
-          echo batch done
+          pip install --upgrade --force-reinstall --no-deps .
+          echo "Start submitting job"
+          python ./tools/batch/submit-job.py --region us-east-1 \
+                                             --job-type g4dn.12x \
+                                             --name GluonCV-GPU-Test-PR#${{ github.event.number }} \
+                                             --source-ref ${{ github.event.pull_request.head.ref }} \
+                                             --work-dir tests \
+                                             --remote https://github.com/${{ github.event.pull_request.head.repo.full_name }} \
+                                             --command "nosetests --with-timer --timer-ok 5 --timer-warning 20 -x --with-coverage --cover-package gluoncv -v model_zoo" \
+                                             --wait
+      # - name: Wait for job and copy files from AWS s3
+      #   shell: bash -l {0}
+      #   if: ${{ failure() || success() }}
+      #   run: |
+      #     echo batch done
       # - name: build-docs
       #   shell: bash -l {0}
       #   run: |
