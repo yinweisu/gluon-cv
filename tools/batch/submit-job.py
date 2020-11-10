@@ -27,7 +27,7 @@ parser.add_argument('--work-dir',
 parser.add_argument('--saved-output',
                     help='output to be saved, relative to working directory. '
                          'it can be either a single file or a directory',
-                    type=str, default='.')
+                    type=str, default='None')
 parser.add_argument('--save-path',
                     help='s3 path where files are saved.',
                     type=str, default='batch/temp/{}'.format(datetime.now().isoformat()))
