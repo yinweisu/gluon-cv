@@ -10,6 +10,8 @@ for f in /mnt/efs/fs1/.mxnet/datasets/*; do
     fi
 done
 
+python3 -m pip install sphinx>=1.5.5 sphinx-gallery sphinx_rtd_theme matplotlib Image recommonmark scipy mxtheme
+
 export MXNET_CUDNN_AUTOTUNE_DEFAULT=0
 cd docs 
 make html

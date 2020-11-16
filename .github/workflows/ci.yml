@@ -137,6 +137,8 @@ jobs:
     # needs: unittests, model_zoo_mxnet, model_zoo_torch
     runs-on: ubuntu-latest
     steps:
+      - name: checkout
+        uses: actions/checkout@v2
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -146,7 +148,7 @@ jobs:
       - name: Install dependencies
         run: |
           python3 -m pip install --upgrade --force-reinstall --no-deps .
-          python3 -m pip install boto3 sphinx>=1.5.5 sphinx-gallery sphinx_rtd_theme matplotlib Image recommonmark scipy mxtheme
+          python3 -m pip install boto3
       - name: Build docs on AWS Batch(For push)
         shell: bash -l {0}
         if: ${{ github.event_name == 'push' }}
