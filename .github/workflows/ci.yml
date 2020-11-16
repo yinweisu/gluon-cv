@@ -159,7 +159,7 @@ jobs:
                                              --remote https://github.com/${{ github.repository }} \
                                              --command "chmod +x ./github/workflow/build_docs.sh && ./github/workflow/build_docs.sh ${{ github.ref }}" \
                                              --wait
-     - name: Build docs on AWS Batch(For pull request)
+      - name: Build docs on AWS Batch(For pull request)
         if: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' }}
         run: |
           echo "Start submitting job"
