@@ -158,6 +158,7 @@ jobs:
                                              --job-type g4dn.4x \
                                              --name GluonCV-GPU-Test-${{ github.ref }} \
                                              --source-ref ${{ github.ref }} \
+                                             --work-dir . \
                                              --remote https://github.com/${{ github.repository }} \
                                              --command "chmod +x ./.github/workflows/build_docs.sh && ./.github/workflows/build_docs.sh ${{ github.ref }}" \
                                              --wait
@@ -169,6 +170,7 @@ jobs:
                                              --job-type g4dn.4x \
                                              --name GluonCV-GPU-Test-PR#${{ github.event.number }} \
                                              --source-ref ${{ github.event.pull_request.head.ref }} \
+                                             --work-dir . \
                                              --remote https://github.com/${{ github.event.pull_request.head.repo.full_name }} \
                                              --command "chmod +x ./.github/workflows/build_docs.sh && ./.github/workflows/build_docs.sh ${{ github.ref }}" \
                                              --wait
