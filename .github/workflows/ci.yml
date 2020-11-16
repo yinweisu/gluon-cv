@@ -65,8 +65,8 @@ jobs:
   #         aws-region: us-east-1
   #     - name: Install dependencies
   #       run: |
-  #         python3 -m pip install --upgrade --force-reinstall --no-deps .
-  #         python3 -m pip install boto3
+  #         pip install --upgrade --force-reinstall --no-deps .
+  #         pip install boto3
   #     - name: Test model_zoo_mxnet on AWS Batch(For push)
   #       shell: bash -l {0}
   #       if: ${{ github.event_name == 'push' }}
@@ -106,8 +106,8 @@ jobs:
   #         aws-region: us-east-1
   #     - name: Install dependencies
   #       run: |
-  #         python3 -m pip install --upgrade --force-reinstall --no-deps .
-  #         python3 -m pip install boto3
+  #         pip install --upgrade --force-reinstall --no-deps .
+  #         pip install boto3
   #     - name: Test model_zoo_torch on AWS Batch(For push)
   #       shell: bash -l {0}
   #       if: ${{ github.event_name == 'push' }}
@@ -159,7 +159,7 @@ jobs:
                                              --name GluonCV-GPU-Test-${{ github.ref }} \
                                              --source-ref ${{ github.ref }} \
                                              --remote https://github.com/${{ github.repository }} \
-                                             --command "chmod +x ./github/workflow/build_docs.sh && ./github/workflow/build_docs.sh ${{ github.ref }}" \
+                                             --command "chmod +x ./.github/workflow/build_docs.sh && ./github/workflow/build_docs.sh ${{ github.ref }}" \
                                              --wait
       - name: Build docs on AWS Batch(For pull request)
         if: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' }}
@@ -170,6 +170,6 @@ jobs:
                                              --name GluonCV-GPU-Test-PR#${{ github.event.number }} \
                                              --source-ref ${{ github.event.pull_request.head.ref }} \
                                              --remote https://github.com/${{ github.event.pull_request.head.repo.full_name }} \
-                                             --command "chmod +x ./github/workflow/build_docs.sh && ./github/workflow/build_docs.sh ${{ github.ref }}" \
+                                             --command "chmod +x ./.github/workflow/build_docs.sh && ./github/workflow/build_docs.sh ${{ github.ref }}" \
                                              --wait
               
