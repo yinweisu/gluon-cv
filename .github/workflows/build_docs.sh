@@ -4,6 +4,7 @@ BRANCH=$(basename $1)
 
 EFS="/mnt/efs/fs1"
 
+sudo apt-get update 
 sudo apt install -y yum-utils
 sudo yum install -y amazon-efs-utils
 mkdir -p $EFS
