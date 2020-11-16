@@ -2,8 +2,13 @@
 
 BRANCH=$(basename $1)
 
+EFS="/mnt/efs/fs1"
+
+mkdir -p $EFS
+sudo mount -t efs -o tls fs-3ead76cb:/ $EFS/
+
 mkdir -p ~/.mxnet/datasets
-for f in /mnt/efs/fs1/.mxnet/datasets/*; do
+for f in $EFS/.mxnet/datasets/*; do
     if [ -d "$f" ]; then
         # Will not run if no directories are available
         ln -s $f ~/.mxnet/datasets/$(basename "$f")
