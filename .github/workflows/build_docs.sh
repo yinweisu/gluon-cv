@@ -2,7 +2,7 @@
 
 BRANCH=$(basename $1)
 
-EFS="/mnt/efs/fs1"
+EFS="~/mnt/efs/fs1"
 
 mkdir -p $EFS
 # sudo mount -t efs -o tls fs-3ead76cb:/ $EFS/
