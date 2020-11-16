@@ -4,11 +4,9 @@ BRANCH=$(basename $1)
 
 EFS="/mnt/efs/fs1"
 
-sudo apt-get update 
-sudo apt install -y yum-utils
-sudo yum install -y amazon-efs-utils
 mkdir -p $EFS
-sudo mount -t efs -o tls fs-3ead76cb:/ $EFS/
+# sudo mount -t efs -o tls fs-3ead76cb:/ $EFS/
+sudo mount -t nfs -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport fs-3ead76cb.efs.us-east-1.amazonaws.com:/   $EFS/
 
 mkdir -p ~/.mxnet/datasets
 for f in $EFS/.mxnet/datasets/*; do

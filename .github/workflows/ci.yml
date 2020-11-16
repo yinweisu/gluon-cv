@@ -156,7 +156,7 @@ jobs:
           echo "Start submitting job"
           python ./tools/batch/submit-job.py --region us-east-1 \
                                              --job-type g4dn.4x \
-                                             --name GluonCV-GPU-Test-${{ github.ref }} \
+                                             --name GluonCV-GPU-BuildDocs-${{ github.ref }} \
                                              --source-ref ${{ github.ref }} \
                                              --work-dir . \
                                              --remote https://github.com/${{ github.repository }} \
@@ -168,7 +168,7 @@ jobs:
           echo "Start submitting job"
           python ./tools/batch/submit-job.py --region us-east-1 \
                                              --job-type g4dn.4x \
-                                             --name GluonCV-GPU-Test-PR#${{ github.event.number }} \
+                                             --name GluonCV-GPU-BuildDocs-PR#${{ github.event.number }} \
                                              --source-ref ${{ github.event.pull_request.head.ref }} \
                                              --work-dir . \
                                              --remote https://github.com/${{ github.event.pull_request.head.repo.full_name }} \
