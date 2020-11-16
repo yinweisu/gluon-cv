@@ -5,7 +5,7 @@ BRANCH=$(basename $1)
 EFS=~/mnt/efs/fs1
 
 sudo apt-get update
-sudo apt update -y
+sudo apt install -y yum-utils
 sudo yum -y install nfs-utils
 mkdir -p $EFS
 # sudo mount -t efs -o tls fs-3ead76cb:/ $EFS/
