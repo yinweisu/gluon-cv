@@ -147,8 +147,8 @@ jobs:
           aws-region: us-east-1
       - name: Install dependencies
         run: |
-          python3 -m pip install --upgrade --force-reinstall --no-deps .
-          python3 -m pip install boto3
+          pip install --upgrade --force-reinstall --no-deps .
+          pip install boto3
       - name: Build docs on AWS Batch(For push)
         shell: bash -l {0}
         if: ${{ github.event_name == 'push' }}
