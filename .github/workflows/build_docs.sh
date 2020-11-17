@@ -2,7 +2,7 @@
 
 BRANCH=$(basename $1)
 
-EFS=~/mnt/efs
+EFS=/mnt/efs
 
 # sudo apt-get update
 # sudo apt install -y yum-utils
