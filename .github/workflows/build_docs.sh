@@ -26,7 +26,7 @@ sed -i.bak 's/pre{padding:1rem;margin:1.5rem\\s0;overflow:auto;overflow-y:hidden
 
 if [[ $BRANCH == master ]]; then
 	# aws s3 cp s3://gluon-cv.mxnet.io/coverage.svg build/html/coverage.svg
-	# aws s3 sync --delete build/html/ s3://gluon-cv.mxnet.io/ --acl public-read --cache-control max-age=7200
+	aws s3 sync --delete build/html/ s3://gluoncv-ci/build_docs/master/ --acl public-read --cache-control max-age=7200
 	# aws s3 cp build/html/coverage.svg s3://gluon-cv.mxnet.io/coverage.svg --acl public-read --cache-control max-age=300
 	# echo "Uploaded doc to http://gluon-cv.mxnet.io"
 	echo master
