@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
 BRANCH=$(basename $1)
+PR_NUMBER=$2
+COMMIT_SHA=$3
 
 EFS=/mnt/efs
 
@@ -29,8 +31,8 @@ if [[ $BRANCH == master ]]; then
 	# echo "Uploaded doc to http://gluon-cv.mxnet.io"
 	echo master
 else
-	# aws s3 cp s3://gluon-vision-staging/${env.BRANCH_NAME}/${env.BUILD_NUMBER}/coverage.svg build/html/coverage.svg
-	# aws s3 sync --delete build/html/ s3://gluon-vision-staging/${env.BRANCH_NAME}/${env.BUILD_NUMBER}/ --acl public-read
+	# aws s3 cp s3://gluoncv-ci/build_docs/$PR_NUMBER/$COMMIT_SHA/coverage.svg build/html/coverage.svg
+	aws s3 sync --delete build/html/ s3://gluoncv-ci/build_docs/$PR_NUMBER/$COMMIT_SHA/ --acl public-read
 	# echo "Uploaded doc to http://gluon-vision-staging.s3-website-us-west-2.amazonaws.com/${env.BRANCH_NAME}/${env.BUILD_NUMBER}/index.html"
 	echo $BRANCH
 fi;

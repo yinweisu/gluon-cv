@@ -160,7 +160,7 @@ jobs:
                                              --source-ref ${{ github.ref }} \
                                              --work-dir . \
                                              --remote https://github.com/${{ github.repository }} \
-                                             --command "chmod +x ./.github/workflows/build_docs.sh && ./.github/workflows/build_docs.sh ${{ github.ref }}" \
+                                             --command "chmod +x ./.github/workflows/build_docs.sh && ./.github/workflows/build_docs.sh ${{ github.ref }} ${{ github.event.number }} ${{ github.sha }}" \
                                              --wait
       - name: Build docs on AWS Batch(For pull request)
         if: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' }}
@@ -172,6 +172,6 @@ jobs:
                                              --source-ref ${{ github.event.pull_request.head.ref }} \
                                              --work-dir . \
                                              --remote https://github.com/${{ github.event.pull_request.head.repo.full_name }} \
-                                             --command "chmod +x ./.github/workflows/build_docs.sh && ./.github/workflows/build_docs.sh ${{ github.ref }}" \
+                                             --command "chmod +x ./.github/workflows/build_docs.sh && ./.github/workflows/build_docs.sh ${{ github.ref }} ${{ github.event.number }} ${{ github.sha }}" \
                                              --wait
               
