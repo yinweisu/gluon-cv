@@ -160,7 +160,7 @@ jobs:
                                              --source-ref ${{ github.ref }} \
                                              --work-dir . \
                                              --remote https://github.com/${{ github.repository }} \
-                                             --command "chmod +x ./.github/workflows/build_docs.sh && ./.github/workflows/build_docs.sh ${{ github.ref }} ${{ github.event.number }} ${{ github.sha }}" \
+                                             --command "chmod +x ./.github/workflows/build_docs.sh && ./.github/workflows/build_docs.sh ${{ github.ref }} ${{ github.event.number }} ${GITHUB_SHA::8}" \
                                              --wait
       - name: Build docs on AWS Batch(For pull request)
         if: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' }}
@@ -172,7 +172,7 @@ jobs:
                                              --source-ref ${{ github.event.pull_request.head.ref }} \
                                              --work-dir . \
                                              --remote https://github.com/${{ github.event.pull_request.head.repo.full_name }} \
-                                             --command "chmod +x ./.github/workflows/build_docs.sh && ./.github/workflows/build_docs.sh ${{ github.ref }} ${{ github.event.number }} ${{ github.sha }}" \
+                                             --command "chmod +x ./.github/workflows/build_docs.sh && ./.github/workflows/build_docs.sh ${{ github.ref }} ${{ github.event.number }} ${GITHUB_SHA::8}" \
                                              --wait
       - name: Comment on PR
         if: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' }}
@@ -180,7 +180,7 @@ jobs:
         with:
           issue-number: ${{ github.event.number }}
           body: |
-            Job ${{ github.event.number }}-${{ github.sha }} is done. 
-            Docs are uploaded to http://gluon-vision-staging.s3-website-us-west-2.amazonaws.com/${{ github.event.number }}/${{ github.sha }}/index.html 
+            Job ${{ github.event.number }}-${GITHUB_SHA::8} is done. 
+            Docs are uploaded to http://gluon-vision-staging.s3-website-us-west-2.amazonaws.com/${{ github.event.number }}/${GITHUB_SHA::8}/index.html 
 
               
