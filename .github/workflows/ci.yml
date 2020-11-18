@@ -1,6 +1,4 @@
 name: CI workflow
-
-
 on: 
   push:
     branches:
@@ -139,7 +137,7 @@ jobs:
                                              --command "nosetests --with-timer --timer-ok 5 --timer-warning 20 -x --with-coverage --cover-package gluoncv/torch -v model_zoo_torch" \
                                              --wait
   build-docs:
-    needs: unittests, model_zoo_mxnet, model_zoo_torch
+    needs: [unittests, model_zoo_mxnet, model_zoo_torch]
     runs-on: ubuntu-latest
     steps:
       - name: checkout
