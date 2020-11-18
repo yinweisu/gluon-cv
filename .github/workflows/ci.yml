@@ -3,7 +3,7 @@ on:
   push:
     branches:
     - master
-  pull_request:
+  pull_request_target:
 
 jobs:
   unittests:
@@ -12,8 +12,15 @@ jobs:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
     steps:
-      - name: checkout
+      - name: Checkout repository(For push)
+        if: ${{ github.event_name == 'push' }}
         uses: actions/checkout@v2
+      - name: Checkout Pull Request Repository(For pull request)
+        if: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' }}
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
       - name: Setup Miniconda
         uses: conda-incubator/setup-miniconda@v2.0.0
         with:
@@ -76,24 +83,24 @@ jobs:
         run: |
           echo "Start submitting job"
           python ./tools/batch/submit-job.py --region us-east-1 \
-                                             --job-type g4dn.12x \
+                                             --job-type g4dn.4x \
                                              --name GluonCV-GPU-Test-${{ github.ref }} \
                                              --source-ref ${{ github.ref }} \
                                              --work-dir tests \
                                              --remote https://github.com/${{ github.repository }} \
-                                             --command "nosetests --with-timer --timer-ok 5 --timer-warning 20 -x --with-coverage --cover-package gluoncv -v model_zoo" \
+                                             --command "export MXNET_CUDNN_AUTOTUNE_DEFAULT=0 && export MPLBACKEND=Agg && export KMP_DUPLICATE_LIB_OK=TRUE && nosetests --with-timer --timer-ok 5 --timer-warning 20 -x --with-coverage --cover-package gluoncv -v model_zoo" \
                                              --wait
       - name: Test model_zoo_mxnet on AWS Batch(For pull request)
         if: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' }}
         run: |
           echo "Start submitting job"
           python ./tools/batch/submit-job.py --region us-east-1 \
-                                             --job-type g4dn.12x \
+                                             --job-type g4dn.4x \
                                              --name GluonCV-GPU-Test-PR#${{ github.event.number }} \
                                              --source-ref ${{ github.event.pull_request.head.ref }} \
                                              --work-dir tests \
                                              --remote https://github.com/${{ github.event.pull_request.head.repo.full_name }} \
-                                             --command "nosetests --with-timer --timer-ok 5 --timer-warning 20 -x --with-coverage --cover-package gluoncv -v model_zoo" \
+                                             --command "export MXNET_CUDNN_AUTOTUNE_DEFAULT=0 && export MPLBACKEND=Agg && export KMP_DUPLICATE_LIB_OK=TRUE && nosetests --with-timer --timer-ok 5 --timer-warning 20 -x --with-coverage --cover-package gluoncv -v model_zoo" \
                                              --wait
   model_zoo_torch:
     needs: unittests
@@ -122,7 +129,7 @@ jobs:
                                              --source-ref ${{ github.ref }} \
                                              --work-dir tests \
                                              --remote https://github.com/${{ github.repository }} \
-                                             --command "nosetests --with-timer --timer-ok 5 --timer-warning 20 -x --with-coverage --cover-package gluoncv/torch -v model_zoo_torch" \
+                                             --command "export MXNET_CUDNN_AUTOTUNE_DEFAULT=0 && export MPLBACKEND=Agg && export KMP_DUPLICATE_LIB_OK=TRUE && nosetests --with-timer --timer-ok 5 --timer-warning 20 -x --with-coverage --cover-package gluoncv/torch -v model_zoo_torch" \
                                              --wait
       - name: Test model_zoo_torch on AWS Batch(For pull request)
         if: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' }}
@@ -134,7 +141,7 @@ jobs:
                                              --source-ref ${{ github.event.pull_request.head.ref }} \
                                              --work-dir tests \
                                              --remote https://github.com/${{ github.event.pull_request.head.repo.full_name }} \
-                                             --command "nosetests --with-timer --timer-ok 5 --timer-warning 20 -x --with-coverage --cover-package gluoncv/torch -v model_zoo_torch" \
+                                             --command "export MXNET_CUDNN_AUTOTUNE_DEFAULT=0 && export MPLBACKEND=Agg && export KMP_DUPLICATE_LIB_OK=TRUE && nosetests --with-timer --timer-ok 5 --timer-warning 20 -x --with-coverage --cover-package gluoncv/torch -v model_zoo_torch" \
                                              --wait
   build-docs:
     needs: [unittests, model_zoo_mxnet, model_zoo_torch]
@@ -178,7 +185,7 @@ jobs:
                                              --source-ref ${{ github.event.pull_request.head.ref }} \
                                              --work-dir . \
                                              --remote https://github.com/${{ github.event.pull_request.head.repo.full_name }} \
-                                             --command "chmod +x ./.github/workflows/build_docs.sh && ./.github/workflows/build_docs.sh ${{ github.ref }} ${{ github.event.number }} ${{ steps.vars.outputs.sha_short }}" \
+                                             --command "chmod +x ./.github/workflows/build_docs.sh && ./.github/workflows/build_docs.sh ${{ github.event.pull_request.head.ref }} ${{ github.event.number }} ${{ steps.vars.outputs.sha_short }}" \
                                              --wait
       - name: Comment on PR
         if: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' }}
