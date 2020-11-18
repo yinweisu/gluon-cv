@@ -4,7 +4,6 @@ on:
     branches:
     - master
   pull_request_target:
-
 jobs:
   unittests:
     runs-on: ${{ matrix.os }}
