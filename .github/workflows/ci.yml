@@ -193,7 +193,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
+        if: ${{ github.event_name == 'push' }}
         uses: actions/checkout@v2
+      - name: Checkout Pull Request Repository(For pull request)
+        if: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' }}
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
       # - name: Configure AWS Credentials
       #   uses: aws-actions/configure-aws-credentials@v1
       #   with:
@@ -206,7 +213,7 @@ jobs:
       #     pip install boto3
       - name: Set SHA outputs
         id: vars
-        run: echo "::set-output name=sha_short::$(git rev-parse --short $GITHUB_SHA)"
+        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
       # - name: Build docs on AWS Batch(For push)
       #   shell: bash -l {0}
       #   if: ${{ github.event_name == 'push' }}
@@ -239,7 +246,5 @@ jobs:
           issue-number: ${{ github.event.number }}
           body: |
             Job ${{ github.event.number }}-${{ steps.vars.outputs.sha_short }} is done. 
-            Docs are uploaded to http://gluon-vision-staging.s3-website-us-west-2.amazonaws.com/PR-${{ github.event.number }}/${{ steps.vars.outputs.sha_short }}/index.html 
+            Docs are uploaded to http://gluon-vision-staging.s3-website-us-west-2.amazonaws.com/${{ github.event.number }}/${{ steps.vars.outputs.sha_short }}/index.html 
 
-            
-                        
