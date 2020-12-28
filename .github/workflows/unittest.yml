@@ -26,6 +26,7 @@ jobs:
         with:
           auto-update-conda: true
           python-version: 3.7
+          
 #      - name: sanity-check
 #        shell: bash -l {0}
 #        run: |
