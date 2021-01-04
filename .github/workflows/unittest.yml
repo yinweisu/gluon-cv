@@ -17,15 +17,9 @@ jobs:
           GITHUB_CONTEXT: ${{ toJson(github) }}
         run: |
           echo "$GITHUB_CONTEXT"
-      - name: Checkout repository(For push)
+      - name: Checkout repository
         if: ${{ github.event_name == 'push' }}
         uses: actions/checkout@v2
-      - name: Checkout Pull Request Repository(For pull request)
-        if: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' }}
-        uses: actions/checkout@v2
-        with:
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.event.pull_request.head.ref }}
       - name: Setup Miniconda
         uses: conda-incubator/setup-miniconda@v2.0.0
         with:
