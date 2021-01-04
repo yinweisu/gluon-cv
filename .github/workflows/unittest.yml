@@ -6,7 +6,7 @@ on:
   pull_request:
 jobs:
   unittests:
-#    runs-on: ubuntu-latest
+#    runs-on: windows-latest
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -16,7 +16,6 @@ jobs:
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
         run: |
-          echo hello
           echo "$GITHUB_CONTEXT"
       - name: Checkout repository(For push)
         if: ${{ github.event_name == 'push' }}
@@ -83,13 +82,11 @@ jobs:
           echo "${{ github.event.pull_request.head.repo.full_name }}"
           echo "${{ github.event.number }}"
           echo "${{ github.event.pull_request.head.sha }}"
-          SHORT_SHA=$(git rev-parse --short "${{ github.event.pull_request.head.sha }}")
-          echo "$SHORT_SHA"
           mkdir git_context
           echo "${{ github.event.pull_request.head.ref }}" > git_context/ref.atf
           echo "${{ github.event.pull_request.head.repo.full_name }}" > git_context/repo.atf
           echo "${{ github.event.number }}" > git_context/pr.atf
-          echo "$SHORT_SHA" > git_context/sha.atf
+          echo "${{ github.event.pull_request.head.sha }}" > git_context/sha.atf
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
