@@ -22,6 +22,14 @@ try:
 except ImportError:
     MXDataset = object
     mx = None
+try:
+    import torch
+    import torchvision as tv
+    TorchDataset = torch.utils.data.Dataset
+except ImportError:
+    TorchDataset = object
+    torch = None
+    tv = None
 
 logger = logging.getLogger()
 
@@ -610,6 +618,11 @@ class ObjectDetectionDataset(pd.DataFrame):
         df = self.reset_index(drop=True)
         return _MXObjectDetectionDataset(df)
 
+    def to_torch(self):
+        """Return a pytorch based iterator that returns ndarray and labels"""
+        df = self.reset_index(drop=True)
+        return _TorchObjectDetectionDataset(df)
+
     def random_split(self, test_size=0.1, val_size=0, random_state=None):
         r"""Randomly split the dataset into train/val/test sets.
         Note that it's perfectly fine to set `test_size` or `val_size` to 0, where the
@@ -724,6 +737,45 @@ class _MXObjectDetectionDataset(MXDataset):
         im_path = self._dataset['image'][idx]
         rois = self._dataset['rois'][idx]
         img = self._imread(im_path)
+        width, height = img.shape[1], img.shape[0]
+        def convert_entry(roi):
+            return [float(roi[key]) for key in ['xmin', 'ymin', 'xmax', 'ymax']] + \
+                [self.classes.index(roi['class']), float(roi.get('difficult', 0))]
+        label = np.array([convert_entry(roi) for roi in rois])
+        label[:, (0, 2)] *= width
+        label[:, (1, 3)] *= height
+        return img, label
+
+class _TorchObjectDetectionDataset(TorchDataset):
+    """Internal wrapper read entries in pd.DataFrame as images/labels.
+
+    Parameters
+    ----------
+    dataset : ObjectDetectionDataset
+        DataFrame as ObjectDetectionDataset.
+
+    """
+    def __init__(self, dataset):
+        if torch is None:
+            raise RuntimeError('Unable to import pytorch which is required.')
+        if tv is None:
+            raise RuntimeError('Unable to import torch vision which is required.')
+        assert isinstance(dataset, ObjectDetectionDataset)
+        if not dataset.is_packed():
+            dataset = dataset.pack()
+        assert 'image' in dataset.columns
+        assert 'rois' in dataset.columns
+        self._dataset = dataset
+        self.classes = self._dataset.classes
+        self._read_image = tv.io.read_image
+
+    def __len__(self):
+        return self._dataset.shape[0]
+
+    def __getitem__(self, idx):
+        im_path = self._dataset['image'][idx]
+        rois = self._dataset['rois'][idx]
+        img = self._read_image(im_path, mode=tv.io.ImageReadMode.RGB)
         width, height = img.shape[1], img.shape[0]
         def convert_entry(roi):
             return [float(roi[key]) for key in ['xmin', 'ymin', 'xmax', 'ymax']] + \
